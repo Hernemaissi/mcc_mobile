@@ -21,4 +21,16 @@
    android:layout_height="wrap_content"
    android:text="@string/stop_service"
    android:onClick="stopService" />
+   
+   <Button android:id="@+id/btnPostService"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:text="@string/post_service"
+   android:onClick="postService"/>
+   
+   <Button android:id="@+id/btnDeleteService"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:text="@string/delete_service"
+   android:onClick="deleteService"/>
  </LinearLayout>

@@ -9,15 +9,33 @@ import java.net.URL;
 
 
 
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.app.IntentService;
-
 import android.content.Intent;
-
 import android.util.Log;
 import android.widget.Toast;
 
 public class ApiService extends IntentService {
-	public static final String API_GET_URL = "http://130.233.42.224:8080/api/contacts";
+	public static final String API_BASE_URL = "http://10.0.2.2:8080/api/contacts";
+	
+	public static final String GET_INTENT = "GET";
+	public static final String POST_INTENT = "POST";
+	public static final String DELETE_INTENT = "DELETE";
 	
 	public ApiService() {
 		super("Apiservice");
@@ -28,7 +46,20 @@ public class ApiService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		String result = "No response";
 		try {
-			result = downloadUrl(API_GET_URL);
+			if (intent.getStringExtra("type").equalsIgnoreCase(GET_INTENT)) {
+				result = downloadUrl(API_BASE_URL);
+			} else if (intent.getStringExtra("type").equalsIgnoreCase(POST_INTENT)) {
+				String name = intent.getStringExtra("name");
+				String phone = intent.getStringExtra("phone");
+				String mail = intent.getStringExtra("mail");
+				result = postContact(name, phone, mail);
+			}else if (intent.getStringExtra("type").equalsIgnoreCase(DELETE_INTENT)) {
+				String id = intent.getStringExtra("id");
+				result = deleteContact(id);
+			} else {
+				result = "Unknown intent type";
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -60,13 +91,12 @@ public class ApiService extends IntentService {
 	    return sb.toString();
 	}
 	
-	// Given a URL, establishes an HttpUrlConnection and retrieves
-	// the web page content as a InputStream, which it returns as
-	// a string.
 	private String downloadUrl(String myurl) throws IOException {
+		
+		Toast.makeText(getApplicationContext(), "Started get", 
+				   Toast.LENGTH_LONG).show();
+		
 	    InputStream is = null;
-	    // Only display the first 500 characters of the retrieved
-	    // web page content.
 	        
 	    try {
 	        URL url = new URL(myurl);
@@ -75,25 +105,80 @@ public class ApiService extends IntentService {
 	        conn.setConnectTimeout(15000 /* milliseconds */);
 	        conn.setRequestMethod("GET");
 	        conn.setDoInput(true);
-	        // Starts the query
 	        conn.connect();
 	        int response = conn.getResponseCode();
 	        Log.d("RESPONSE", "The response is: " + response);
 	        is = conn.getInputStream();
 
-	        // Convert the InputStream into a string
 	        String contentAsString = convertStreamToString(is);
 	        return contentAsString;
-	        
-	    // Makes sure that the InputStream is closed after the app is
-	    // finished using it.
+
 	    } finally {
 	        if (is != null) {
 	            is.close();
 	        } 
 	    }
 	}
+	
+	private String postContact(String name, String phone, String mail) {
+		
+		Toast.makeText(getApplicationContext(), "Started post", 
+				   Toast.LENGTH_LONG).show();
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(API_BASE_URL);
+		try {
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			nameValuePairs.add(new BasicNameValuePair("name", name));
+			nameValuePairs.add(new BasicNameValuePair("phone",
+					phone));
+			nameValuePairs.add(new BasicNameValuePair("email", mail));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
+			HttpResponse response = httpclient.execute(httppost);
+			
+			int resp_code = response.getStatusLine().getStatusCode();
+			
+			Log.d("RESPONSE", "The response is: " + resp_code);
+			
+			String str_resp = convertStreamToString(response.getEntity().getContent());
+			return str_resp;
+
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+private String deleteContact(String id) {
+		
+		Toast.makeText(getApplicationContext(), "Started post", 
+				   Toast.LENGTH_LONG).show();
+		
+		String url = API_BASE_URL + "/" + id;
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpDelete httpdelete = new HttpDelete(url);
+		try {
+
+			HttpResponse response = httpclient.execute(httpdelete);
+			
+			int resp_code = response.getStatusLine().getStatusCode();
+			
+			Log.d("RESPONSE", "The response is: " + resp_code);
+			
+			String str_resp = convertStreamToString(response.getEntity().getContent());
+			return str_resp;
+
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 
 }

@@ -9,6 +9,9 @@ import android.view.View;
 
 
 public class MainActivity extends ActionBarActivity {
+	public static final String GET_INTENT = "GET";
+	public static final String POST_INTENT = "POST";
+	public static final String DELETE_INTENT = "DELETE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +41,29 @@ public class MainActivity extends ActionBarActivity {
     
     // Method to start the service
     public void startService(View view) {
-       startService(new Intent(getBaseContext(), ApiService.class));
+       Intent i = new Intent(getBaseContext(), ApiService.class);
+       i.putExtra("type", GET_INTENT);
+       startService(i);
     }
 
     // Method to stop the service
     public void stopService(View view) {
        stopService(new Intent(getBaseContext(), ApiService.class));
+    }
+    
+    public void postService(View view) {
+        Intent i = new Intent(getBaseContext(), ApiService.class);
+        i.putExtra("type", POST_INTENT);
+        i.putExtra("name", "Android User");
+        i.putExtra("phone", "123-765");
+        i.putExtra("mail", "android@android.com");
+        startService(i);
+     }
+    
+    public void deleteService(View view) {
+    	Intent i = new Intent(getBaseContext(), ApiService.class);
+    	i.putExtra("type", DELETE_INTENT);
+    	i.putExtra("id", "547b260284f0cf8c1d2df4af");
+    	startService(i);
     }
 }
