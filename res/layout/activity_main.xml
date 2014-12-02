@@ -33,4 +33,12 @@
    android:layout_height="wrap_content"
    android:text="@string/delete_service"
    android:onClick="deleteService"/>
+   
+   <Button android:id="@+id/btnImportContact"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:text="@string/import_contact"
+   android:onClick="importContact"/>
+   
+   
  </LinearLayout>

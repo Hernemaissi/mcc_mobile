@@ -31,7 +31,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class ApiService extends IntentService {
-	public static final String API_BASE_URL = "http://10.0.2.2:8080/api/contacts";
+	public static final String API_BASE_URL = "http://130.233.42.224:8080/api/contacts";
 	
 	public static final String GET_INTENT = "GET";
 	public static final String POST_INTENT = "POST";

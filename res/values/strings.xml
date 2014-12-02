@@ -8,5 +8,6 @@
     <string name="stop_service">Stop Service</string>
     <string name="post_service">Test Post</string>
     <string name="delete_service">Test Delete</string>
+    <string name="import_contact">Import Contact</string>
 
 </resources>
