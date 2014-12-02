@@ -1648,11 +1648,12 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f09002e;
         public static final int action_mode_bar_stub=0x7f09002d;
         public static final int action_mode_close_button=0x7f090020;
-        public static final int action_settings=0x7f090044;
+        public static final int action_settings=0x7f090045;
         public static final int activity_chooser_view_content=0x7f090021;
         public static final int always=0x7f090014;
         public static final int beginning=0x7f09001b;
         public static final int btnDeleteService=0x7f090042;
+        public static final int btnExportContact=0x7f090044;
         public static final int btnImportContact=0x7f090043;
         public static final int btnPostService=0x7f090041;
         public static final int btnStartService=0x7f09003f;
@@ -1820,6 +1821,7 @@ containing a value of this type.
         public static final int action_settings=0x7f0a0012;
         public static final int app_name=0x7f0a0010;
         public static final int delete_service=0x7f0a0016;
+        public static final int export_contact=0x7f0a0018;
         public static final int hello_world=0x7f0a0011;
         public static final int import_contact=0x7f0a0017;
         public static final int post_service=0x7f0a0015;

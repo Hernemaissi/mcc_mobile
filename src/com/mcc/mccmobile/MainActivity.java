@@ -1,12 +1,19 @@
 package com.mcc.mccmobile;
 
+import java.util.ArrayList;
+
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.StructuredName;
+import android.provider.ContactsContract.Data;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -77,6 +84,65 @@ public class MainActivity extends ActionBarActivity {
     	Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
     	startActivityForResult(intent, PICK_CONTACT);
     }
+    
+    public void exportContact(View view) {
+    	String name = "Test Guy1";
+    	String phone = "999-999";
+    	String email = "test1@test.com";
+    	export(name, phone, email);
+    }
+    
+	private void export(String name, String phone, String email) {
+		
+		String gName = name.split(" ")[0];
+		String fName = name.split(" ")[1];
+
+		ArrayList<ContentProviderOperation> op_list = new ArrayList<ContentProviderOperation>();
+		op_list.add(ContentProviderOperation
+				.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+				.withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+				.withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null)
+				// .withValue(RawContacts.AGGREGATION_MODE,
+				// RawContacts.AGGREGATION_MODE_DEFAULT)
+				.build());
+		op_list.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+				.withValue(StructuredName.GIVEN_NAME, gName)
+				.withValue(StructuredName.FAMILY_NAME, fName).build());
+
+		op_list.add(ContentProviderOperation
+				.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(
+						ContactsContract.Data.MIMETYPE,
+						ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+				.withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phone)
+				.withValue(ContactsContract.CommonDataKinds.Phone.TYPE,
+						Phone.TYPE_MOBILE).build());
+
+		op_list.add(ContentProviderOperation
+				.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(
+						ContactsContract.Data.MIMETYPE,
+						ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+				.withValue(ContactsContract.CommonDataKinds.Email.DATA, email)
+				.withValue(ContactsContract.CommonDataKinds.Email.TYPE,
+						ContactsContract.CommonDataKinds.Email.TYPE_WORK)
+				.build());
+
+		try {
+			ContentProviderResult[] results = getContentResolver().applyBatch(
+					ContactsContract.AUTHORITY, op_list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+    
+    
+    
     
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent data) {

@@ -40,5 +40,11 @@
    android:text="@string/import_contact"
    android:onClick="importContact"/>
    
+   <Button android:id="@+id/btnExportContact"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:text="@string/export_contact"
+   android:onClick="exportContact"/>
+   
    
  </LinearLayout>
