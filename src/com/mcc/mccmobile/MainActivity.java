@@ -2,11 +2,19 @@ package com.mcc.mccmobile;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,9 +22,13 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.Data;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -28,6 +40,10 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	
+    	LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+    	        new IntentFilter("get_all"));
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
@@ -195,4 +211,57 @@ public class MainActivity extends ActionBarActivity {
           break;
       }
     }
+    
+  private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String data = intent.getStringExtra("data");
+      Log.d("receiver", "Data is: " + data);
+      parseContacts(data);
+    }
+  };
+  
+	protected void parseContacts(String json) {
+		try {
+			JSONArray array = new JSONArray(json);
+			JSONObject current = null;
+			String[] values = new String[array.length()];
+			for (int i = 0; i < array.length(); i++) {
+				current = array.getJSONObject(i);
+				String id = current.getString("_id");
+				String name = current.getString("name");
+				String phone = current.getString("phone");
+				String email = current.getString("email");
+				values[i] = name + " / " + phone + " / " + email;
+			}
+			final ListView listview = (ListView) findViewById(R.id.listview);
+			
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+					this, android.R.layout.simple_list_item_1, values);
+			listview.setAdapter(adapter);
+			
+			listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+			      @Override
+			      public void onItemClick(AdapterView<?> parent, final View view,
+			          int position, long id) {
+			        final String item = (String) parent.getItemAtPosition(position);
+			        Toast.makeText(getApplicationContext(), Integer.toString(position), 
+			   				   Toast.LENGTH_LONG).show();
+			      }
+
+			    });
+			
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+  @Override
+  protected void onDestroy() {
+    // Unregister since the activity is about to be closed.
+	LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+    super.onDestroy();
+  }
 }

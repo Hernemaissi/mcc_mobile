@@ -46,5 +46,10 @@
    android:text="@string/export_contact"
    android:onClick="exportContact"/>
    
+   <ListView
+    android:id="@+id/listview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" /> 
+   
    
  </LinearLayout>

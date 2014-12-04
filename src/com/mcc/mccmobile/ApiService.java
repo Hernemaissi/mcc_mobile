@@ -27,6 +27,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,16 +47,26 @@ public class ApiService extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		String result = "No response";
 		try {
+			
 			if (intent.getStringExtra("type").equalsIgnoreCase(GET_INTENT)) {
 				result = downloadUrl(API_BASE_URL);
+				Intent result_intent = new Intent("get_all");
+				result_intent.putExtra("data", result);
+				LocalBroadcastManager.getInstance(this).sendBroadcast(result_intent);
+				
+				
 			} else if (intent.getStringExtra("type").equalsIgnoreCase(POST_INTENT)) {
 				String name = intent.getStringExtra("name");
 				String phone = intent.getStringExtra("phone");
 				String mail = intent.getStringExtra("mail");
 				result = postContact(name, phone, mail);
+				
+				
 			}else if (intent.getStringExtra("type").equalsIgnoreCase(DELETE_INTENT)) {
 				String id = intent.getStringExtra("id");
 				result = deleteContact(id);
+				
+				
 			} else {
 				result = "Unknown intent type";
 			}
