@@ -10,5 +10,25 @@
     <string name="delete_service">Test Delete</string>
     <string name="import_contact">Import Contact</string>
     <string name="export_contact">Export Contact</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="get_contacts">Get Contacts</string>
+    <string name="create_contact">Create Contact</string>
+    <string name="delete_contact">Delete Contact</string>
+    <string name="save">Save</string>
+    <string name="name">Name</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+    <string name="status">Status</string>
+    <string name="deleting">Deleting...</string>
+    <string name="deleted">Deleted</string>
+    <string name="exported">Exported</string>
+    <string name="exporting">Exporting...</string>
+    <string name="creating">Creating...</string>
+    <string name="created">Created</string>
+    <string name="imported">Imported</string>
+    <string name="id">Identifier</string>
+    <string name="show_contact">Contact Details</string>
 
 </resources>
